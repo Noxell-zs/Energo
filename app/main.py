@@ -1,4 +1,4 @@
-""""""
+"""Application for electricity demand forecasting"""
 
 import os
 import threading
@@ -19,7 +19,7 @@ def predict(
         target: str = 'Потребление, МВт*ч',
         analysis_length: int = 72,
         preemption_length: int = 168,
-        callback = None
+        callback=None
 ):
     energo = pd.read_csv(filename)
     labels = [i for i in energo.columns if is_numeric_dtype(energo[i]) and i != target]
@@ -71,7 +71,7 @@ def predict(
     pd.DataFrame({target: out_data}).to_csv(f'{out_name}.csv')
 
     plt.figure(figsize=(8, 4))
-    plt.plot(out_data, color='red')
+    plt.plot(out_data, color='#630DA7')
     plt.ylabel(target)
     plt.savefig(f'{out_name}.png')
 
@@ -95,6 +95,12 @@ class App(Tk):
         self.title("Прогнозирование электрических нагрузок")
         # self.geometry("512x512")
         self.config(bg="#544B64", cursor="arrow")
+        self.img = None
+
+        try:
+            self.iconbitmap("icon.ico")
+        except Exception as e:
+            print(e)
 
         stl = Style()
         stl.configure('Button.TLabel', padding=6, anchor="center",
