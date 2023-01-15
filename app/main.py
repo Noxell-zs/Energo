@@ -14,6 +14,14 @@ from sklearn.neural_network import MLPRegressor
 from pandas.api.types import is_numeric_dtype
 
 
+params = {
+    'hidden_layer_sizes': (700, 700),
+    'max_iter': 1000,
+    'random_state': 1,
+    'solver': 'lbfgs',
+}
+
+
 def predict(
         filename: str = 'data.csv',
         target: str = 'Потребление, МВт*ч',
@@ -46,8 +54,8 @@ def predict(
     train_subs = np.array(scaler.transform(energo)[analysis_length - n_old:]).T
     train_y = train_subs[-1]
 
-    sub_models = [MLPRegressor(hidden_layer_sizes=(500,), max_iter=1000, random_state=1) for _ in train_subs[:-1]]
-    g_model = MLPRegressor(hidden_layer_sizes=(500,), max_iter=1000, random_state=1)
+    sub_models = [MLPRegressor(**params) for _ in train_subs[:-1]]
+    g_model = MLPRegressor(**params)
     _ = g_model.fit(gr_train_x, train_y)
 
     for i in range(len(sub_models)):
@@ -71,7 +79,7 @@ def predict(
     pd.DataFrame({target: out_data}).to_csv(f'{out_name}.csv')
 
     plt.figure(figsize=(8, 4))
-    plt.plot(out_data, color='#630DA7')
+    plt.plot(out_data, color='#630DA7', marker='.', ms=5)
     plt.ylabel(target)
     plt.savefig(f'{out_name}.png')
 
